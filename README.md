@@ -1,0 +1,1 @@
+# MultiversX Vanity Address Generator
