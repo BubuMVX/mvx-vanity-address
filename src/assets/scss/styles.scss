@@ -1,0 +1,72 @@
+@import "fonts";
+@import "variables";
+@import "node_modules/bootstrap/scss/bootstrap";
+
+::selection {
+  color: $black;
+  background: lighten($secondary, 30%);
+}
+
+.min-vh-100 {
+  min-height: 100svh !important;
+}
+
+.card.bg-secondary {
+  @extend .border-2;
+
+  .card-body {
+    @extend .rounded;
+    background: $gradient;
+    white-space: pre-wrap;
+  }
+}
+
+.form-control, .form-select {
+  background: $gradient;
+
+  > option {
+    background-color: $dark;
+    font-size: 1rem;
+  }
+}
+
+.form-floating {
+  > .form-control:focus,
+  > .form-control:not(:placeholder-shown),
+  > .form-control-plaintext,
+  > .form-select {
+    ~ label {
+
+      &::after {
+        background-color: transparent;
+      }
+    }
+  }
+
+  > .form-select {
+    padding-top: 1.025rem;
+  }
+}
+
+.input-group-text {
+  background: $gradient;
+
+  .btn .svg-inline--fa {
+    @extend .me-0;
+  }
+}
+
+.btn {
+  .svg-inline--fa {
+    height: 0.7em;
+    margin-right: 0.3em;
+  }
+}
+
+.align-super {
+  vertical-align: super;
+}
+
+textarea.form-control {
+  min-height: 110px;
+}
