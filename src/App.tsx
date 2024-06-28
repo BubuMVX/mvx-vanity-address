@@ -129,6 +129,14 @@ export const App = () => {
         }
     }
 
+    const inputTextFilter = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        const re = /^[a-z0-9]$/i
+
+        if (e.key != 'Backspace' && e.key != 'Delete' && !re.test(e.key)) {
+            e.preventDefault()
+        }
+    }
+
     const download = (content: string, type: string, filename: string) => {
         const blob = new Blob([content], {type})
         const url = window.URL.createObjectURL(blob)
@@ -301,8 +309,9 @@ export const App = () => {
                                             value={searchPrefix}
                                             disabled={isWorking}
                                             placeholder=""
+                                            maxLength={16}
                                             onChange={(e) => setSearchPrefix(e.currentTarget.value)}
-                                            maxLength={10}
+                                            onKeyDown={inputTextFilter}
                                         />
                                     </FloatingLabel>
                                 </Col>
@@ -316,8 +325,9 @@ export const App = () => {
                                             value={searchSuffix}
                                             disabled={isWorking}
                                             placeholder=""
+                                            maxLength={16}
                                             onChange={(e) => setSearchSuffix(e.currentTarget.value)}
-                                            maxLength={10}
+                                            onKeyDown={inputTextFilter}
                                         />
                                     </FloatingLabel>
                                 </Col>
