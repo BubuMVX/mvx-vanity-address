@@ -229,42 +229,6 @@ export const App = () => {
                     <Row className="flex-grow-1 align-items-center">
                         <Col>
                             <Row className="align-items-center g-3 mb-3">
-                                <Col xs={12} md={4} className="align-self-stretch">
-                                    <Button
-                                        variant={isWorking ? "outline-secondary" : "secondary"}
-                                        onClick={handleStartButton}
-                                        size="lg"
-                                        className="w-100 h-100"
-                                    >
-                                        {isWorking ? "STOP" : "START"}
-                                    </Button>
-                                </Col>
-                                <Col className="py-0">
-                                    <Row>
-                                        <Col xs={12} sm={"auto"}>
-                                            Timer: <Timer timestamp={startTime} start={isWorking}/>
-                                        </Col>
-                                        <Col>
-                                            Wallets tested: {totalTests == 0 && isWorking
-                                            ? "warming up"
-                                            : <CountUp
-                                                end={totalTests}
-                                                preserveValue={true}
-                                                formattingFn={countUpFormatting}
-                                            />
-                                        }
-                                        </Col>
-                                    </Row>
-                                </Col>
-                                <Col xs={"auto"} className="text-secondary text-end">
-                                    {result
-                                        ? <FontAwesomeIcon icon={faCheck} size={"2xl"} className="text-success"/>
-                                        : <FontAwesomeIcon icon={faCompactDisc} size={"2xl"} spin={isWorking}
-                                                           beat={isWorking}/>
-                                    }
-                                </Col>
-                            </Row>
-                            <Row className="align-items-center g-3 mb-3">
                                 <Col xs={6} sm={3} md={2}>
                                     <FloatingLabel
                                         label="Threads"
@@ -298,7 +262,7 @@ export const App = () => {
                                         </Form.Select>
                                     </FloatingLabel>
                                 </Col>
-                                <div className="w-100 d-block d-md-none"></div>
+                                <div className="w-100 d-block d-md-none m-0"></div>
                                 <Col>
                                     <FloatingLabel
                                         label="Prefix"
@@ -330,6 +294,42 @@ export const App = () => {
                                             onKeyDown={inputTextFilter}
                                         />
                                     </FloatingLabel>
+                                </Col>
+                            </Row>
+                            <Row className="align-items-center g-3 mb-3">
+                                <Col xs={12} md={4} className="align-self-stretch">
+                                    <Button
+                                        variant={isWorking ? "outline-secondary" : "secondary"}
+                                        onClick={handleStartButton}
+                                        size="lg"
+                                        className="w-100 h-100"
+                                    >
+                                        {isWorking ? "STOP" : "START"}
+                                    </Button>
+                                </Col>
+                                <Col className="py-0">
+                                    <Row>
+                                        <Col xs={12} sm={"auto"}>
+                                            Timer: <Timer timestamp={startTime} start={isWorking}/>
+                                        </Col>
+                                        <Col>
+                                            Wallets tested: {totalTests == 0 && isWorking
+                                            ? "warming up"
+                                            : <CountUp
+                                                end={totalTests}
+                                                preserveValue={true}
+                                                formattingFn={countUpFormatting}
+                                            />
+                                        }
+                                        </Col>
+                                    </Row>
+                                </Col>
+                                <Col xs={"auto"} className="text-secondary text-end">
+                                    {result
+                                        ? <FontAwesomeIcon icon={faCheck} size={"2xl"} className="text-success"/>
+                                        : <FontAwesomeIcon icon={faCompactDisc} size={"2xl"} spin={isWorking}
+                                                           beat={isWorking}/>
+                                    }
                                 </Col>
                             </Row>
                             <div className="mb-3">
