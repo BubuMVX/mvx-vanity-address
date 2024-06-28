@@ -22,11 +22,13 @@ export const App = () => {
     const [result, setResult] = useState<Result | null>(null)
     const [searchShard, setSearchShard] = useLocalStorage('searchShard', -1)
     const [searchPrefix, setSearchPrefix] = useLocalStorage('searchPrefix', '')
+    const [searchContains, setSearchContains] = useLocalStorage('searchContains', '')
     const [searchSuffix, setSearchSuffix] = useLocalStorage('searchSuffix', '')
     const inputThreads = useId()
     const inputSearchShard = useId()
     const inputSearchPrefix = useId()
     const inputSearchSuffix = useId()
+    const inputSearchContains = useId()
     const [maxThreads, setMaxThreads] = useState(0)
     const [threads, setThreads] = useLocalStorage('threads', 0)
 
@@ -78,6 +80,7 @@ export const App = () => {
                 id: id,
                 searchShard: searchShard,
                 searchPrefix: searchPrefix,
+                searchContains: searchContains,
                 searchSuffix: searchSuffix,
             })
         }
@@ -94,7 +97,6 @@ export const App = () => {
 
     const messageHandler = (event: MessageEvent) => {
         const data: SearchWorkerEvent = event.data
-        let count = -1
 
         switch (data.event) {
             case 'success': {
@@ -110,21 +112,15 @@ export const App = () => {
                     address: address,
                     shard: data.shard,
                 })
-
-                count = data.count ?? 0
                 break
             }
             case 'count':
-                count = data.count ?? 0
+                countTests.current[data.id] = data.count ?? 0
+                setTotalTests(countTests.current.reduce((count, value) => count + value, 0))
                 break
             case 'error':
                 console.error(data)
                 break
-        }
-
-        if (count > -1) {
-            countTests.current[data.id] = data.count ?? 0
-            setTotalTests(countTests.current.reduce((count, value) => count + value, 0))
         }
     }
 
@@ -228,23 +224,7 @@ export const App = () => {
                     <Row className="flex-grow-1 align-items-center">
                         <Col>
                             <Row className="align-items-center g-3 mb-3">
-                                <Col xs={6} sm={3} md={2}>
-                                    <FloatingLabel
-                                        label="Threads"
-                                        controlId={inputThreads}
-                                    >
-                                        <Form.Select
-                                            value={threads}
-                                            disabled={isWorking}
-                                            onChange={(e) => setThreads(parseInt(e.currentTarget.value))}
-                                        >
-                                            {Array.from({length: maxThreads}).map((_e, index) => {
-                                                return <option key={index} value={index + 1}>{index + 1}</option>
-                                            })}
-                                        </Form.Select>
-                                    </FloatingLabel>
-                                </Col>
-                                <Col xs={6} sm={3} md={2}>
+                                <Col xs={6} md={2}>
                                     <FloatingLabel
                                         label="Shard"
                                         controlId={inputSearchShard}
@@ -261,7 +241,6 @@ export const App = () => {
                                         </Form.Select>
                                     </FloatingLabel>
                                 </Col>
-                                <div className="w-100 d-block d-md-none m-0"></div>
                                 <Col>
                                     <FloatingLabel
                                         label="Prefix"
@@ -274,6 +253,23 @@ export const App = () => {
                                             placeholder=""
                                             maxLength={16}
                                             onChange={(e) => setSearchPrefix(e.currentTarget.value)}
+                                            onKeyDown={inputTextFilter}
+                                        />
+                                    </FloatingLabel>
+                                </Col>
+                                <div className="w-100 d-block d-md-none m-0"></div>
+                                <Col>
+                                    <FloatingLabel
+                                        label="Contains"
+                                        controlId={inputSearchContains}
+                                    >
+                                        <Form.Control
+                                            type="text"
+                                            value={searchContains}
+                                            disabled={isWorking}
+                                            placeholder=""
+                                            maxLength={16}
+                                            onChange={(e) => setSearchContains(e.currentTarget.value)}
                                             onKeyDown={inputTextFilter}
                                         />
                                     </FloatingLabel>
@@ -296,7 +292,7 @@ export const App = () => {
                                 </Col>
                             </Row>
                             <Row className="align-items-center g-3 mb-3">
-                                <Col xs={12} md={4} className="align-self-stretch">
+                            <Col xs={12} md={4} className="align-self-stretch">
                                     <Button
                                         variant={isWorking ? "outline-secondary" : "secondary"}
                                         onClick={handleStartButton}
@@ -306,17 +302,31 @@ export const App = () => {
                                         {isWorking ? "STOP" : "START"}
                                     </Button>
                                 </Col>
+                                <Col xs={3} sm={2}>
+                                    <FloatingLabel
+                                        label="Threads"
+                                        controlId={inputThreads}
+                                    >
+                                        <Form.Select
+                                            value={threads}
+                                            disabled={isWorking}
+                                            onChange={(e) => setThreads(parseInt(e.currentTarget.value))}
+                                        >
+                                            {Array.from({length: maxThreads}).map((_e, index) => {
+                                                return <option key={index} value={index + 1}>{index + 1}</option>
+                                            })}
+                                        </Form.Select>
+                                    </FloatingLabel>
+                                </Col>
                                 <Col className="py-0">
-                                    <Row>
-                                        <Col xs={12} sm={"auto"}>
-                                            Timer: <Timer timestamp={startTime} start={isWorking}/>
-                                        </Col>
-                                        <Col>
-                                            Wallets tested: {totalTests == 0 && isWorking
-                                            ? "warming up"
-                                            : countFormatting(totalTests)}
-                                        </Col>
-                                    </Row>
+                                    <div>
+                                        Timer: <Timer timestamp={startTime} start={isWorking}/>
+                                    </div>
+                                    <div>
+                                        Wallets tested: {totalTests == 0 && isWorking
+                                        ? "warming up"
+                                        : countFormatting(totalTests)}
+                                    </div>
                                 </Col>
                                 <Col xs={"auto"} className="text-secondary text-end">
                                     {result

@@ -12,7 +12,13 @@ self.onmessage = async (event: MessageEvent) => {
 
     const searchShard = (event.data.searchShard ?? -1)
     const searchPrefix = (event.data.searchPrefix ?? '').toLowerCase()
+    const searchContains = (event.data.searchContains ?? '').toLowerCase()
     const searchSuffix = (event.data.searchSuffix ?? '').toLowerCase()
+
+    const withShard = searchShard > -1
+    const withPrefix = searchPrefix.length > 0
+    const withContains = searchContains.length > 0
+    const withSuffix = searchSuffix.length > 0
 
     let count = 0
     let searching = true
@@ -23,28 +29,41 @@ self.onmessage = async (event: MessageEvent) => {
 
         for (let index = 0; index < 1000; index++) {
             count++
-
-            //if (count % 10 == 0) {
-                postMessage({
-                    'event': 'count',
-                    'id': id,
-                    'count': count,
-                })
-            //}
+            postMessage({
+                'event': 'count',
+                'id': id,
+                'count': count,
+            })
 
             const key = mnemonic.deriveKey(index)
             const address = new Address(key.generatePublicKey().toAddress().bech32())
             const shortAddress = address.bech32().slice(4)
-            const shard = addressComputer.getShardOfAddress(address)
+            let match = true
 
-            if (shortAddress.startsWith(searchPrefix) && shortAddress.endsWith(searchSuffix) && (searchShard == -1 || searchShard == shard)) {
+            if (withShard) {
+                const computedShard = addressComputer.getShardOfAddress(address)
+                match = (match && searchShard == computedShard)
+            }
+
+            if(withPrefix) {
+                match = (match && shortAddress.startsWith(searchPrefix))
+            }
+
+            if(withContains) {
+                match = (match && shortAddress.indexOf(searchContains) > -1)
+            }
+
+            if(withSuffix) {
+                match = (match && shortAddress.endsWith(searchSuffix))
+            }
+
+            if (match) {
                 const message = {
                     'event': 'success',
                     'id': id,
-                    'count': count,
                     'address': address.bech32(),
                     'mnemonic': mnemonic.toString(),
-                    'shard': shard,
+                    'shard': addressComputer.getShardOfAddress(address),
                     'index': index,
                 }
                 console.log(`Worker #${id}`, message)
