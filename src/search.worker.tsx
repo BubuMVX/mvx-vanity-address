@@ -41,8 +41,7 @@ self.onmessage = async (event: MessageEvent) => {
             let match = true
 
             if (withShard) {
-                const computedShard = addressComputer.getShardOfAddress(address)
-                match = (match && searchShard == computedShard)
+                match = (match && searchShard == addressComputer.getShardOfAddress(address))
             }
 
             if(withPrefix) {
