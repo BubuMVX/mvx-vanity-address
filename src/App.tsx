@@ -7,7 +7,6 @@ import useLocalStorage from "@reactutils/use-local-storage";
 import {Readme} from "./components/Readme.tsx";
 import {SearchWorkerEvent} from "./types/SearchWorker.types.tsx";
 import {Timer} from "./components/Timer.tsx";
-import CountUp from "react-countup";
 import {Result} from "./types/Result.types.tsx";
 import {Mnemonic, UserWallet} from "@multiversx/sdk-wallet/out";
 import {strChunk} from "./utils/strChunk.ts";
@@ -214,7 +213,7 @@ export const App = () => {
         download(text, "text/plain", `${result.address.bech32()}.txt`)
     }
 
-    const countUpFormatting = useCallback((num: number) => num.toLocaleString(), [])
+    const countFormatting = useCallback((num: number) => num.toLocaleString(), [])
 
     return (
         <Container fluid>
@@ -315,20 +314,23 @@ export const App = () => {
                                         <Col>
                                             Wallets tested: {totalTests == 0 && isWorking
                                             ? "warming up"
-                                            : <CountUp
-                                                end={totalTests}
-                                                preserveValue={true}
-                                                formattingFn={countUpFormatting}
-                                            />
-                                        }
+                                            : countFormatting(totalTests)}
                                         </Col>
                                     </Row>
                                 </Col>
                                 <Col xs={"auto"} className="text-secondary text-end">
                                     {result
-                                        ? <FontAwesomeIcon icon={faCheck} size={"2xl"} className="text-success"/>
-                                        : <FontAwesomeIcon icon={faCompactDisc} size={"2xl"} spin={isWorking}
-                                                           beat={isWorking}/>
+                                        ? <FontAwesomeIcon
+                                            icon={faCheck}
+                                            size={"2xl"}
+                                            className="text-success"
+                                        />
+                                        : <FontAwesomeIcon
+                                            icon={faCompactDisc}
+                                            size={"2xl"}
+                                            spin={isWorking}
+                                            beat={isWorking}
+                                        />
                                     }
                                 </Col>
                             </Row>
