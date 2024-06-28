@@ -20,7 +20,7 @@ You can set these settings:
 - `Threads`: the number of CPU threads used for the calculations. The more, the faster. Limited by the number of CPU
   cores your computer has.
 - `Shard`: the shard you want for your wallet.
-- `Prefix` / Suffix: search for a specific string at the beginning or at the end of your wallet address.
+- `Prefix` / `Contains` / `Suffix`: search for a specific string at the beginning, anywhere, or at the end of your wallet address.
 
 ## Output
 
