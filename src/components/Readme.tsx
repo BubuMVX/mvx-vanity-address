@@ -1,5 +1,7 @@
-import {Button, Col, Modal, Row} from "react-bootstrap";
+import {Alert, Button, Col, Modal, Row} from "react-bootstrap";
 import {useState} from "react";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCircleInfo} from "@fortawesome/free-solid-svg-icons";
 
 
 export const Readme = () => {
@@ -52,6 +54,10 @@ export const Readme = () => {
                     <h3>
                         Usage
                     </h3>
+                    <Alert variant={"info"}>
+                        <FontAwesomeIcon icon={faCircleInfo} size={"xs"} className="me-2"/>
+                        A wallet address contains alphanumeric characters <strong>excluding 1, b, i, and o</strong>.
+                    </Alert>
                     <p>You can set these settings:</p>
                     <ul>
                         <li>
@@ -62,8 +68,8 @@ export const Readme = () => {
                             <strong>Shard</strong>: the shard you want for your wallet.
                         </li>
                         <li>
-                            <strong>Prefix / Suffix</strong>: search for a specific string at the beginning or at the
-                            end of your wallet address.
+                            <strong>Prefix / Contains / Suffix</strong>: search for a specific string at the beginning,
+                            anywhere, or at the end of your wallet address.
                         </li>
                     </ul>
                     <h3>

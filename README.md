@@ -22,6 +22,8 @@ You can set these settings:
 - `Shard`: the shard you want for your wallet.
 - `Prefix` / `Contains` / `Suffix`: search for a specific string at the beginning, anywhere, or at the end of your wallet address.
 
+Please note that a wallet address contains alphanumeric characters excluding 1, b, i, and o.
+
 ## Output
 
 Once a match is found, you can copy your wallet's details or download your key in various formats:
