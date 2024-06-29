@@ -292,7 +292,7 @@ export const App = () => {
                                 </Col>
                             </Row>
                             <Row className="align-items-center g-3 mb-3">
-                            <Col xs={12} md={4} className="align-self-stretch">
+                                <Col xs={12} md={4} className="align-self-stretch">
                                     <Button
                                         variant={isWorking ? "outline-secondary" : "secondary"}
                                         onClick={handleStartButton}
@@ -396,8 +396,11 @@ export const App = () => {
                                     <Col xs={{span: 4, order: 4}} sm={{span: 2, order: 4}}>
                                         <Form.Group className="mb-3" controlId="wallet.index">
                                             <Form.Label>Index</Form.Label>
-                                            <Form.Control type="text" readOnly={true}
-                                                          value={result ? result.index : ""}/>
+                                            <Form.Control
+                                                type="text"
+                                                readOnly={true}
+                                                value={result ? result.index : ""}
+                                            />
                                         </Form.Group>
                                     </Col>
                                 </Row>

@@ -24,7 +24,7 @@ self.onmessage = async (event: MessageEvent) => {
     let searching = true
     const addressComputer = new AddressComputer()
 
-    while (searching) {
+    do {
         const mnemonic = Mnemonic.generate()
 
         for (let index = 0; index < 1000; index++) {
@@ -36,41 +36,39 @@ self.onmessage = async (event: MessageEvent) => {
             })
 
             const key = mnemonic.deriveKey(index)
-            const address = new Address(key.generatePublicKey().toAddress().bech32())
-            const shortAddress = address.bech32().slice(4)
-            let match = true
+            const address = key.generatePublicKey().toAddress().bech32()
+            const shortAddress = address.slice(4)
 
-            if (withShard) {
-                match = (match && searchShard == addressComputer.getShardOfAddress(address))
+            if (withShard && searchShard != addressComputer.getShardOfAddress(new Address(address))) {
+                continue
             }
 
-            if(withPrefix) {
-                match = (match && shortAddress.startsWith(searchPrefix))
+            if (withPrefix && !shortAddress.startsWith(searchPrefix)) {
+                continue
             }
 
-            if(withContains) {
-                match = (match && shortAddress.indexOf(searchContains) > -1)
+            if (withContains && shortAddress.indexOf(searchContains) == -1) {
+                continue
             }
 
-            if(withSuffix) {
-                match = (match && shortAddress.endsWith(searchSuffix))
+            if (withSuffix && !shortAddress.endsWith(searchSuffix)) {
+                continue
             }
 
-            if (match) {
-                const message = {
-                    'event': 'success',
-                    'id': id,
-                    'address': address.bech32(),
-                    'mnemonic': mnemonic.toString(),
-                    'shard': addressComputer.getShardOfAddress(address),
-                    'index': index,
-                }
-                console.log(`Worker #${id}`, message)
-                postMessage(message)
-                searching = false
+            const message = {
+                'event': 'success',
+                'id': id,
+                'address': address,
+                'mnemonic': mnemonic.toString(),
+                'shard': addressComputer.getShardOfAddress(new Address(address)),
+                'index': index,
             }
+            console.log(`Worker #${id}`, message)
+            postMessage(message)
+            searching = false
+            break
         }
-    }
+    } while (searching)
 
     self.close()
 }
