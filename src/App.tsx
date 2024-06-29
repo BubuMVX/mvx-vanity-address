@@ -29,9 +29,10 @@ export const App = () => {
     const inputSearchContains = useRef<HTMLInputElement>(null)
     const [maxThreads, setMaxThreads] = useState(0)
     const [threads, setThreads] = useLocalStorage('threads', 0)
-    const [searchError, setSearchError] = useState(false)
+    const [validationError, setValidationError] = useState(false)
 
     useEffect(() => {
+        inputValidation()
         const maxCores = countCores()
         setMaxThreads(maxCores)
 
@@ -123,7 +124,7 @@ export const App = () => {
         }
     }
 
-    const inputTextFilter = () => {
+    const inputValidation = () => {
         if (inputSearchPrefix.current == null || inputSearchContains.current == null || inputSearchSuffix.current == null) {
             return
         }
@@ -133,7 +134,7 @@ export const App = () => {
         const contains = inputSearchContains.current.value
         const suffix = inputSearchSuffix.current.value
 
-        setSearchError(!re.test(prefix) || !re.test(contains) || !re.test(suffix))
+        setValidationError(!re.test(prefix) || !re.test(contains) || !re.test(suffix))
     }
 
     const download = (content: string, type: string, filename: string) => {
@@ -258,7 +259,7 @@ export const App = () => {
                                             placeholder=""
                                             maxLength={16}
                                             onChange={(e) => setSearchPrefix(e.currentTarget.value)}
-                                            onKeyUp={inputTextFilter}
+                                            onKeyUp={inputValidation}
                                         />
                                     </FloatingLabel>
                                 </Col>
@@ -276,7 +277,7 @@ export const App = () => {
                                             placeholder=""
                                             maxLength={16}
                                             onChange={(e) => setSearchContains(e.currentTarget.value)}
-                                            onKeyUp={inputTextFilter}
+                                            onKeyUp={inputValidation}
                                         />
                                     </FloatingLabel>
                                 </Col>
@@ -293,13 +294,13 @@ export const App = () => {
                                             placeholder=""
                                             maxLength={16}
                                             onChange={(e) => setSearchSuffix(e.currentTarget.value)}
-                                            onKeyUp={inputTextFilter}
+                                            onKeyUp={inputValidation}
                                         />
                                     </FloatingLabel>
                                 </Col>
                             </Row>
                             <Row className="align-items-center g-3 mb-3">
-                                {searchError ? (
+                                {validationError ? (
                                     <Col xs={12}>
                                         <Alert variant="danger">
                                             A wallet address contains alphanumeric characters excluding 1, b, i and o.
@@ -312,6 +313,7 @@ export const App = () => {
                                         onClick={handleStartButton}
                                         size="lg"
                                         className="w-100 h-100"
+                                        disabled={validationError}
                                     >
                                         {isWorking ? "STOP" : "START"}
                                     </Button>
