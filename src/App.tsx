@@ -1,5 +1,5 @@
-import {Button, Col, Container, FloatingLabel, Form, Image, InputGroup, Row} from "react-bootstrap";
-import React, {useCallback, useEffect, useId, useRef, useState} from "react";
+import {Alert, Button, Col, Container, FloatingLabel, Form, Image, InputGroup, Row} from "react-bootstrap";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import searchWorkerUrl from "./search.worker.tsx?worker&url";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheck, faCompactDisc, faFileLines, faKey, faLock} from "@fortawesome/free-solid-svg-icons";
@@ -24,13 +24,12 @@ export const App = () => {
     const [searchPrefix, setSearchPrefix] = useLocalStorage('searchPrefix', '')
     const [searchContains, setSearchContains] = useLocalStorage('searchContains', '')
     const [searchSuffix, setSearchSuffix] = useLocalStorage('searchSuffix', '')
-    const inputThreads = useId()
-    const inputSearchShard = useId()
-    const inputSearchPrefix = useId()
-    const inputSearchSuffix = useId()
-    const inputSearchContains = useId()
+    const inputSearchPrefix = useRef<HTMLInputElement>(null)
+    const inputSearchSuffix = useRef<HTMLInputElement>(null)
+    const inputSearchContains = useRef<HTMLInputElement>(null)
     const [maxThreads, setMaxThreads] = useState(0)
     const [threads, setThreads] = useLocalStorage('threads', 0)
+    const [searchError, setSearchError] = useState(false)
 
     useEffect(() => {
         const maxCores = countCores()
@@ -124,12 +123,17 @@ export const App = () => {
         }
     }
 
-    const inputTextFilter = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        const re = /^[a-z0-9]$/i
-
-        if (e.key != 'Backspace' && e.key != 'Delete' && !re.test(e.key)) {
-            e.preventDefault()
+    const inputTextFilter = () => {
+        if (inputSearchPrefix.current == null || inputSearchContains.current == null || inputSearchSuffix.current == null) {
+            return
         }
+
+        const re = /^[acdefghjklmnpqrstuvwxyz023456789]*$/i
+        const prefix = inputSearchPrefix.current.value
+        const contains = inputSearchContains.current.value
+        const suffix = inputSearchSuffix.current.value
+
+        setSearchError(!re.test(prefix) || !re.test(contains) || !re.test(suffix))
     }
 
     const download = (content: string, type: string, filename: string) => {
@@ -227,7 +231,7 @@ export const App = () => {
                                 <Col xs={6} md={2}>
                                     <FloatingLabel
                                         label="Shard"
-                                        controlId={inputSearchShard}
+                                        controlId="input.shard"
                                     >
                                         <Form.Select
                                             value={searchShard}
@@ -244,16 +248,17 @@ export const App = () => {
                                 <Col>
                                     <FloatingLabel
                                         label="Prefix"
-                                        controlId={inputSearchPrefix}
+                                        controlId="input.prefix"
                                     >
                                         <Form.Control
+                                            ref={inputSearchPrefix}
                                             type="text"
                                             value={searchPrefix}
                                             disabled={isWorking}
                                             placeholder=""
                                             maxLength={16}
                                             onChange={(e) => setSearchPrefix(e.currentTarget.value)}
-                                            onKeyDown={inputTextFilter}
+                                            onKeyUp={inputTextFilter}
                                         />
                                     </FloatingLabel>
                                 </Col>
@@ -261,37 +266,46 @@ export const App = () => {
                                 <Col>
                                     <FloatingLabel
                                         label="Contains"
-                                        controlId={inputSearchContains}
+                                        controlId="input.contains"
                                     >
                                         <Form.Control
+                                            ref={inputSearchContains}
                                             type="text"
                                             value={searchContains}
                                             disabled={isWorking}
                                             placeholder=""
                                             maxLength={16}
                                             onChange={(e) => setSearchContains(e.currentTarget.value)}
-                                            onKeyDown={inputTextFilter}
+                                            onKeyUp={inputTextFilter}
                                         />
                                     </FloatingLabel>
                                 </Col>
                                 <Col>
                                     <FloatingLabel
                                         label="Suffix"
-                                        controlId={inputSearchSuffix}
+                                        controlId="input.suffix"
                                     >
                                         <Form.Control
+                                            ref={inputSearchSuffix}
                                             type="text"
                                             value={searchSuffix}
                                             disabled={isWorking}
                                             placeholder=""
                                             maxLength={16}
                                             onChange={(e) => setSearchSuffix(e.currentTarget.value)}
-                                            onKeyDown={inputTextFilter}
+                                            onKeyUp={inputTextFilter}
                                         />
                                     </FloatingLabel>
                                 </Col>
                             </Row>
                             <Row className="align-items-center g-3 mb-3">
+                                {searchError ? (
+                                    <Col xs={12}>
+                                        <Alert variant="danger">
+                                            A wallet address contains alphanumeric characters excluding 1, b, i and o.
+                                        </Alert>
+                                    </Col>
+                                ) : null}
                                 <Col xs={12} md={4} className="align-self-stretch">
                                     <Button
                                         variant={isWorking ? "outline-secondary" : "secondary"}
@@ -305,7 +319,7 @@ export const App = () => {
                                 <Col xs={3} sm={2}>
                                     <FloatingLabel
                                         label="Threads"
-                                        controlId={inputThreads}
+                                        controlId="input.threads"
                                     >
                                         <Form.Select
                                             value={threads}
