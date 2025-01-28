@@ -1,5 +1,5 @@
-import {Mnemonic} from "@multiversx/sdk-wallet/out";
 import {Address, AddressComputer} from "@multiversx/sdk-core/out";
+import {Mnemonic} from "@multiversx/sdk-wallet/out";
 
 self.onmessage = async (event: MessageEvent) => {
     if (!event) {
@@ -14,6 +14,9 @@ self.onmessage = async (event: MessageEvent) => {
     const searchPrefix = (event.data.searchPrefix ?? '').toLowerCase()
     const searchContains = (event.data.searchContains ?? '').toLowerCase()
     const searchSuffix = (event.data.searchSuffix ?? '').toLowerCase()
+    const maxIndex = (event.data.searchOnlyFirstIndex ? 1 : 1000)
+    console.log('searchOnlyFirstIndex', event.data.searchOnlyFirstIndex)
+    console.log('maxIndex', maxIndex)
 
     const withShard = searchShard > -1
     const withPrefix = searchPrefix.length > 0
@@ -27,7 +30,7 @@ self.onmessage = async (event: MessageEvent) => {
     do {
         const mnemonic = Mnemonic.generate()
 
-        for (let index = 0; index < 1000; index++) {
+        for (let index = 0; index < maxIndex; index++) {
             count++
             postMessage({
                 'event': 'count',

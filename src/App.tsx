@@ -1,17 +1,17 @@
-import {Alert, Button, Col, Container, FloatingLabel, Form, Image, InputGroup, Row} from "react-bootstrap";
-import React, {useCallback, useEffect, useRef, useState} from "react";
-import searchWorkerUrl from "./search.worker.tsx?worker&url";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheck, faCompactDisc, faFileLines, faKey, faLock} from "@fortawesome/free-solid-svg-icons";
-import useLocalStorage from "@reactutils/use-local-storage";
-import {Readme} from "./components/Readme.tsx";
-import {SearchWorkerEvent} from "./types/SearchWorker.types.tsx";
-import {Timer} from "./components/Timer.tsx";
-import {Result} from "./types/Result.types.tsx";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {Mnemonic, UserWallet} from "@multiversx/sdk-wallet/out";
-import {strChunk} from "./utils/strChunk.ts";
-import {CopyToClipboard} from "./components/CopyToClipboard.tsx";
+import useLocalStorage from "@reactutils/use-local-storage";
+import React, {useCallback, useEffect, useRef, useState} from "react";
+import {Alert, Button, Col, Container, FloatingLabel, Form, Image, InputGroup, Row} from "react-bootstrap";
 import mvxLogo from "./assets/images/multiversx-logo.svg";
+import {CopyToClipboard} from "./components/CopyToClipboard.tsx";
+import {Readme} from "./components/Readme.tsx";
+import {Timer} from "./components/Timer.tsx";
+import searchWorkerUrl from "./search.worker.tsx?worker&url";
+import {Result} from "./types/Result.types.tsx";
+import {SearchWorkerEvent} from "./types/SearchWorker.types.tsx";
+import {strChunk} from "./utils/strChunk.ts";
 
 export const App = () => {
     const [isWorking, setIsWorking] = useState(false)
@@ -24,6 +24,7 @@ export const App = () => {
     const [searchPrefix, setSearchPrefix] = useLocalStorage('searchPrefix', '')
     const [searchContains, setSearchContains] = useLocalStorage('searchContains', '')
     const [searchSuffix, setSearchSuffix] = useLocalStorage('searchSuffix', '')
+    const [searchOnlyFirstIndex, setSearchOnlyFirstIndex] = useLocalStorage('searchOnlyFirstIndex', true)
     const inputSearchPrefix = useRef<HTMLInputElement>(null)
     const inputSearchSuffix = useRef<HTMLInputElement>(null)
     const inputSearchContains = useRef<HTMLInputElement>(null)
@@ -82,6 +83,7 @@ export const App = () => {
                 searchPrefix: searchPrefix,
                 searchContains: searchContains,
                 searchSuffix: searchSuffix,
+                searchOnlyFirstIndex: searchOnlyFirstIndex,
             })
         }
     }
@@ -318,21 +320,36 @@ export const App = () => {
                                         {isWorking ? "STOP" : "START"}
                                     </Button>
                                 </Col>
-                                <Col xs={3} sm={2}>
-                                    <FloatingLabel
-                                        label="Threads"
-                                        controlId="input.threads"
-                                    >
-                                        <Form.Select
-                                            value={threads}
-                                            disabled={isWorking}
-                                            onChange={(e) => setThreads(parseInt(e.currentTarget.value))}
-                                        >
-                                            {Array.from({length: maxThreads}).map((_e, index) => {
-                                                return <option key={index} value={index + 1}>{index + 1}</option>
-                                            })}
-                                        </Form.Select>
-                                    </FloatingLabel>
+                                <Col xs={4} sm={3}>
+                                    <Row>
+                                        <Col xs={12}>
+                                            <Form.Switch
+                                                label="Only index 0"
+                                                checked={searchOnlyFirstIndex}
+                                                disabled={isWorking}
+                                                onChange={(e) => setSearchOnlyFirstIndex(e.currentTarget.checked)}
+                                                className="small"
+                                            />
+                                        </Col>
+                                        <Col xs={8}>
+                                            <FloatingLabel
+                                                label="Threads"
+                                                controlId="input.threads"
+                                            >
+                                                <Form.Select
+                                                    value={threads}
+                                                    disabled={isWorking}
+                                                    onChange={(e) => setThreads(parseInt(e.currentTarget.value))}
+                                                    className="w-75"
+                                                >
+                                                    {Array.from({length: maxThreads}).map((_e, index) => {
+                                                        return <option key={index}
+                                                                       value={index + 1}>{index + 1}</option>
+                                                    })}
+                                                </Form.Select>
+                                            </FloatingLabel>
+                                        </Col>
+                                    </Row>
                                 </Col>
                                 <Col className="py-0">
                                     <div>
