@@ -1,5 +1,5 @@
-import {PropsWithoutRef, useEffect, useRef} from "react";
-import Countdown, {CountdownApi, CountdownRenderProps, zeroPad} from 'react-countdown';
+import { PropsWithoutRef, useEffect, useRef } from 'react';
+import Countdown, { CountdownApi, CountdownRenderProps, zeroPad } from 'react-countdown';
 
 type TimerProps = {
     timestamp: number,
@@ -10,31 +10,31 @@ export const Timer = (
     {
         timestamp,
         start,
-    }: PropsWithoutRef<TimerProps>
+    }: PropsWithoutRef<TimerProps>,
 ) => {
     useEffect(() => {
         if (countdownRef.current == null) {
-            return
+            return;
         }
 
         if (start) {
-            countdownRef.current.start()
+            countdownRef.current.start();
         } else {
-            countdownRef.current.pause()
+            countdownRef.current.pause();
         }
-    }, [start])
+    }, [start]);
 
-    const countdownRef = useRef<CountdownApi | null>()
-    const renderer = ({hours, minutes, seconds}: CountdownRenderProps) => (
+    const countdownRef = useRef<CountdownApi | null>();
+    const renderer = ({ hours, minutes, seconds }: CountdownRenderProps) => (
         <span>
             {zeroPad(hours)}:{zeroPad(minutes)}:{zeroPad(seconds)}
         </span>
-    )
+    );
     const setRef = (countdown: Countdown | null): void => {
         if (countdown) {
-            countdownRef.current = countdown.getApi()
+            countdownRef.current = countdown.getApi();
         }
-    }
+    };
 
     return <Countdown
         ref={setRef}
@@ -42,5 +42,5 @@ export const Timer = (
         renderer={renderer}
         overtime={true}
         autoStart={false}
-    />
-}
+    />;
+};

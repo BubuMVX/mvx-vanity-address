@@ -1,19 +1,20 @@
-import {Alert, Button, Col, Modal, Row} from "react-bootstrap";
-import {useState} from "react";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCircleInfo} from "@fortawesome/free-solid-svg-icons";
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useState } from 'react';
+import { Alert, Button, Col, Modal, Row } from 'react-bootstrap';
+import { Url } from '../config.tsx';
 
 
 export const Readme = () => {
-    const [show, setShow] = useState(false)
-    const handleClose = () => setShow(false)
-    const handleShow = () => setShow(true)
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
 
     return (
         <>
             <Button
-                size="sm"
-                variant="outline-secondary"
+                size={'sm'}
+                variant={'outline-secondary'}
                 onClick={handleShow}
             >
                 Read more
@@ -21,7 +22,7 @@ export const Readme = () => {
             <Modal
                 show={show}
                 onHide={handleClose}
-                size="lg"
+                size={'lg'}
                 centered
             >
                 <Modal.Header closeButton>
@@ -32,7 +33,7 @@ export const Readme = () => {
                         Purpose
                     </h3>
                     <p>
-                        This tool helps you generate a MultiversX wallet according to the criterias your provide.<br/>
+                        This tool helps you generate a MultiversX wallet according to the criterias your provide.<br />
                         It works by randomly generating seed phrases and checking if the associated wallets match your
                         settings.
                     </p>
@@ -45,8 +46,8 @@ export const Readme = () => {
                     </p>
                     <p>
                         You can read, copy, modify, compile and execute the full <a
-                        href="https://github.com/grobux/mvx-vanity-address"
-                        target={"_blank"}
+                        href={Url.GitHub}
+                        target={'_blank'}
                     >
                         open source code on GitHub
                     </a>.
@@ -54,8 +55,8 @@ export const Readme = () => {
                     <h3>
                         Usage
                     </h3>
-                    <Alert variant={"info"}>
-                        <FontAwesomeIcon icon={faCircleInfo} size={"xs"} className="me-2"/>
+                    <Alert variant={'info'}>
+                        <FontAwesomeIcon icon={faCircleInfo} size={'xs'} className={'me-2'} />
                         A wallet address contains alphanumeric characters <strong>excluding 1, b, i, and o</strong>.
                     </Alert>
                     <p>You can set these settings:</p>
@@ -97,21 +98,21 @@ export const Readme = () => {
                     <h3>
                         Links
                     </h3>
-                    <Row className="g-2 justify-content-center">
-                        <Col xs="auto">
+                    <Row className={'g-2 justify-content-center'}>
+                        <Col xs={'auto'}>
                             <Button
-                                as={"a"}
-                                variant="secondary"
-                                href="https://x.com/grobux"
+                                as={'a'}
+                                variant={'secondary'}
+                                href={Url.GitHub}
                             >
                                 My Twitter
                             </Button>
                         </Col>
-                        <Col xs="auto">
+                        <Col xs={'auto'}>
                             <Button
-                                as={"a"}
-                                variant="secondary"
-                                href="https://x.com/ProjectX_DAO"
+                                as={'a'}
+                                variant={'secondary'}
+                                href={Url.ProjectX}
                             >
                                 Project X
                             </Button>
@@ -120,5 +121,5 @@ export const Readme = () => {
                 </Modal.Body>
             </Modal>
         </>
-    )
-}
+    );
+};
