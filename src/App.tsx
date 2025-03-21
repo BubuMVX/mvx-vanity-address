@@ -149,7 +149,7 @@ export const App = () => {
         link.click();
     };
 
-    const handleDownloadJson = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const handleDownloadJson = (event: React.MouseEvent<HTMLButtonElement>, mneomonicJson: boolean) => {
         event.preventDefault();
 
         if (result === null) {
@@ -178,8 +178,9 @@ export const App = () => {
             secretKey: result.secretKey,
             password,
         });
+        const json = mneomonicJson ? userWallet.toJSONWhenKindIsMnemonic() : userWallet.toJSON();
 
-        download(JSON.stringify(userWallet.toJSON()), 'application/json', `${result.address.bech32()}.json`);
+        download(JSON.stringify(json), 'application/json', `${result.address.bech32()}.json`);
     };
 
     const handleDownloadPem = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -435,13 +436,28 @@ export const App = () => {
                                             as={'a'}
                                             variant={'outline-info'}
                                             href={'#'}
-                                            onClick={handleDownloadJson}
+                                            onClick={e => handleDownloadJson(e, true)}
                                             disabled={result === null}
                                         >
                                             <FontAwesomeIcon icon={faLock} />
                                             <span className={'d-none d-sm-inline'}>Download as</span> JSON
                                         </Button>
                                     </Col>
+                                    <Col xs={'auto'}>
+                                        <Button
+                                            as={'a'}
+                                            variant={'outline-info'}
+                                            href={'#'}
+                                            onClick={e => handleDownloadJson(e, false)}
+                                            disabled={result === null}
+                                        >
+                                            <FontAwesomeIcon icon={faLock} />
+                                            <span className={'d-none d-sm-inline'}>Download as&nbsp;</span>
+                                            JSON&nbsp;
+                                            <span className={'small'}>(index only)</span>
+                                        </Button>
+                                    </Col>
+                                    <div className={'w-100 m-0'}></div>
                                     <Col xs={'auto'}>
                                         <Button
                                             as={'a'}

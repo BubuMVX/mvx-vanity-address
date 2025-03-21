@@ -87,6 +87,11 @@ export const Readme = () => {
                             as it is.
                         </li>
                         <li>
+                            <strong>JSON (index only)</strong>:
+                            is the same format as the previous JSON, but only exporting the private key of the found key
+                            index.
+                        </li>
+                        <li>
                             <strong>PEM</strong>:
                             a raw private key, without any protection. Be careful how you store it.
                         </li>
