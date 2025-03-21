@@ -24,7 +24,7 @@ export const Timer = (
         }
     }, [start]);
 
-    const countdownRef = useRef<CountdownApi | null>();
+    const countdownRef = useRef<CountdownApi | null>(null);
     const renderer = ({ hours, minutes, seconds }: CountdownRenderProps) => (
         <span>
             {zeroPad(hours)}:{zeroPad(minutes)}:{zeroPad(seconds)}
