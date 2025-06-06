@@ -1,4 +1,4 @@
-import { Address, AddressComputer } from '@multiversx/sdk-core/out';
+import { Address, AddressComputer, LibraryConfig } from '@multiversx/sdk-core/out';
 import { Mnemonic } from '@multiversx/sdk-wallet/out';
 
 self.onmessage = async (event: MessageEvent) => {
@@ -10,7 +10,11 @@ self.onmessage = async (event: MessageEvent) => {
     const id = parseInt(event.data.id ?? -1);
     console.info(`Start worker #${id}`);
 
-    const searchShard = (event.data.searchShard ?? -1);
+    const hrp = event.data.hrp ?? 'erd';
+    LibraryConfig.DefaultAddressHrp = hrp;
+    const addressSliceIndex = hrp.length + 1;
+
+    const searchShard = event.data.searchShard ?? -1;
     const searchPrefix = (event.data.searchPrefix ?? '').toLowerCase();
     const searchContains = (event.data.searchContains ?? '').toLowerCase();
     const searchSuffix = (event.data.searchSuffix ?? '').toLowerCase();
@@ -41,8 +45,8 @@ self.onmessage = async (event: MessageEvent) => {
             }
 
             const key = mnemonic.deriveKey(index);
-            const address = key.generatePublicKey().toAddress().bech32();
-            const shortAddress = address.slice(4);
+            const address = key.generatePublicKey().toAddress(hrp).bech32();
+            const shortAddress = address.slice(addressSliceIndex);
 
             if (withPrefix && !shortAddress.startsWith(searchPrefix)) {
                 continue;
@@ -72,6 +76,7 @@ self.onmessage = async (event: MessageEvent) => {
             postMessage({
                 'event': 'success',
                 'id': id,
+                'hrp': hrp,
                 'address': address,
                 'mnemonic': mnemonic.toString(),
                 'shard': addressComputer.getShardOfAddress(new Address(address)),

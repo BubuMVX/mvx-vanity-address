@@ -3,6 +3,7 @@ export type SearchWorkerEvent = {
     id: number,
     count: number,
     message: string,
+    hrp: string,
     address: string,
     mnemonic: string,
     shard: number,

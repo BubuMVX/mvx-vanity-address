@@ -21,6 +21,7 @@ export const App = () => {
     const countTests = useRef<number[]>([]);
     const [totalTests, setTotalTests] = useState<number>(0);
     const [result, setResult] = useState<Result | null>(null);
+    const [hrp, setHrp] = useLocalStorage('hrp', 'erd');
     const [searchShard, setSearchShard] = useLocalStorage('searchShard', -1);
     const [searchPrefix, setSearchPrefix] = useLocalStorage('searchPrefix', '');
     const [searchContains, setSearchContains] = useLocalStorage('searchContains', '');
@@ -80,6 +81,7 @@ export const App = () => {
             workers.current[id].postMessage({
                 action: 'start',
                 id: id,
+                hrp: hrp,
                 searchShard: searchShard,
                 searchPrefix: searchPrefix,
                 searchContains: searchContains,
@@ -107,11 +109,12 @@ export const App = () => {
 
                 const mnemonic = Mnemonic.fromString(data.mnemonic);
                 const secretKey = mnemonic.deriveKey(data.index);
-                const address = secretKey.generatePublicKey().toAddress();
+                const address = secretKey.generatePublicKey().toAddress(data.hrp);
                 setResult({
                     mnemonic: mnemonic,
                     index: data.index,
                     secretKey: secretKey,
+                    hrp: data.hrp,
                     address: address,
                     shard: data.shard,
                 });
@@ -233,6 +236,21 @@ export const App = () => {
                     <Row className={'flex-grow-1 align-items-center'}>
                         <Col>
                             <Row className={'align-items-center g-3 mb-3'}>
+                                <Col xs={6} md={2}>
+                                    <FloatingLabel
+                                        label={'HRP'}
+                                        controlId={'input.hrp'}
+                                    >
+                                        <Form.Select
+                                            value={hrp}
+                                            disabled={isWorking}
+                                            onChange={(e) => setHrp(e.currentTarget.value)}
+                                        >
+                                            <option value={'erd'}>erd</option>
+                                            <option value={'vibe'}>vibe</option>
+                                        </Form.Select>
+                                    </FloatingLabel>
+                                </Col>
                                 <Col xs={6} md={2}>
                                     <FloatingLabel
                                         label={'Shard'}
