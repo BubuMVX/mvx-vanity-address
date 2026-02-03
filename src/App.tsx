@@ -248,6 +248,7 @@ export const App = () => {
                                         >
                                             <option value={'erd'}>erd</option>
                                             <option value={'vibe'}>vibe</option>
+                                            <option value={'claw'}>claw</option>
                                         </Form.Select>
                                     </FloatingLabel>
                                 </Col>
